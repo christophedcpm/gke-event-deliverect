@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  hello
+  namespace: default
+  labels:
+    app:  hello
+spec:
+  selector:
+    matchLabels:
+      app: hello
+  replicas: 4
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  hello
+    spec:
+      containers:
+      - name:  hello
+        image:  europe-west1-docker.pkg.dev/gke-event-345118/gke-event/hello:0.1.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "1"
+            memory: 512Mi
+        ports:
+        - containerPort:  8080
+          name:  http
+      restartPolicy: Always
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello
+spec:
+  maxReplicas: 15
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello
+  targetCPUUtilizationPercentage: 20
