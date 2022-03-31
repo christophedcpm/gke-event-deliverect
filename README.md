@@ -109,10 +109,6 @@ go install github.com/tsenart/vegeta@latest
 ```
 
 
-```
-watch kubectl get horizontalpodautoscalers.autoscaling hello
-```
-
 We can now start sending request to our app. By changing the value of the `-rate` flag we can choose how much request are sent by seconds.
 
 ```
